@@ -6,7 +6,7 @@
 // @version       1.00
 // @description   Demo Cordial
 // @include       *
-// @updateURL     
+// @updateURL     https://bkranson.github.io/crdl/demo_tm.user.js
 // ==/UserScript==
 console.log('Started Cordial Demo');
 
@@ -77,7 +77,15 @@ console.log('Started Cordial Demo');
       },
       sleep, maxAttempts);
   };
-
+  var add_cordial = function(account_key){
+    var t = document.createElement('script');
+    t.setAttribute("data-cordial-track-key", account_key);
+    t.setAttribute("data-cordial-url", "track.cordial.io");
+    t.setAttribute("data-auto-track", false);
+    t.src = 'https://track.cordial.io/track.js';
+    t.async = true;
+    document.body.appendChild(t);
+  }
   if($ && $.fn){
     $.fn.bindFirst = function(name, fn) {
       // bind as you normally would
@@ -96,20 +104,8 @@ console.log('Started Cordial Demo');
     };
   }
 
-  var arrayUnique = function arrayUnique(a) {
-      return a.reduce(function(p, c) {
-          if (p.indexOf(c) < 0) p.push(c);
-          return p;
-      }, []);
-  };
-  
-  var getDate = function(){
-    var a = new Date();
-    var b = ('0000'+a.getFullYear()).slice(-4);
-    b += "-";
-    b += ('00'+(a.getMonth()+1)).slice(-2);
-    b += "-";
-    b += ('00'+a.getDate()).slice(-2);
-    return b;
+  if(currentURLMatches(['https?:\/\/tealium\.com'])){
+    add_cordial('sandbox-bk');
   }
+
 })(unsafeWindow);
