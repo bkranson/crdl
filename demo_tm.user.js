@@ -12,9 +12,6 @@ console.log('Started Cordial Demo');
 
 (function(unsafe) {
   'use strict';
-  unsafe.sdfwa = unsafe.sdfwa || {};
-  var s = unsafe.sdfwa;
-  s.tmp = {};
   $ = unsafe.jQuery;
 
   var contentEval = function contentEval(source, execute) {
@@ -106,6 +103,16 @@ console.log('Started Cordial Demo');
 
   if(currentURLMatches(['https?:\/\/tealium\.com'])){
     add_cordial('sandbox-bk');
+    when(function(){
+      if(typeof unsafe.cordial !== 'undefined'){
+        return true;
+      }else{
+        return false;
+      }
+    }, funtion(){
+      unsafe.cordial.identify('bkranson+201704170343@cordial.io');
+      unsafe.cordial.event('test_custom', {"date_time": (new Date())+""});      
+    }, 200, 20);
   }
 
 })(unsafeWindow);
