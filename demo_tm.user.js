@@ -8,8 +8,6 @@
 // @include       *
 // @updateURL     https://bkranson.github.io/crdl/demo_tm.user.js
 // ==/UserScript==
-console.log('Started Cordial Demo');
-
 (function(unsafe) {
   'use strict';
   $ = unsafe.jQuery;
@@ -74,6 +72,15 @@ console.log('Started Cordial Demo');
       },
       sleep, maxAttempts);
   };
+
+  var inIframe = function(){
+      try {
+          return unsafe.self !== unsafe.top;
+      } catch (e) {
+          return true;
+      }
+  };
+
   var add_cordial = function(account_key){
     var t = document.createElement('script');
     t.setAttribute("data-cordial-track-key", account_key);
@@ -82,7 +89,8 @@ console.log('Started Cordial Demo');
     t.src = 'https://track.cordial.io/track.js';
     t.async = true;
     document.body.appendChild(t);
-  }
+  };
+
   if($ && $.fn){
     $.fn.bindFirst = function(name, fn) {
       // bind as you normally would
@@ -101,18 +109,24 @@ console.log('Started Cordial Demo');
     };
   }
 
-  if(currentURLMatches(['https?:\/\/tealium\.com'])){
-    add_cordial('sandbox-bk');
-    when(function(){
-      if(typeof unsafe.cordial !== 'undefined'){
-        return true;
-      }else{
-        return false;
-      }
-    }, funtion(){
-      unsafe.cordial.identify('bkranson+201704170343@cordial.io');
-      unsafe.cordial.event('test_custom', {"date_time": (new Date())+""});      
-    }, 200, 20);
+  if(currentURLMatches(['^https?:\/\/tealium\.com']) && !inIframe()){
+      console.log('Started Cordial Tealium Demo');
+      add_cordial('sandbox-bk');
+      when(
+      function(){
+        if(typeof unsafe.cordial !== 'undefined'){
+          return true;
+        }else{
+          return false;
+        }
+      },
+      function(){
+        unsafe.cordial.identify('bkranson+201704170343@cordial.io');
+        unsafe.cordial.event('test_custom', {"date_time": (new Date())+""});
+      },
+      200,
+      20
+    );
   }
 
 })(unsafeWindow);
