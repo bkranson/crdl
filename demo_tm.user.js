@@ -81,6 +81,14 @@
       }
   };
 
+  var cordial_ready = function(){
+    if(typeof unsafe.cordial !== 'undefined'){
+      return true;
+    }else{
+      return false;
+    }
+  };
+
   var add_cordial = function(account_key){
     var t = document.createElement('script');
     t.setAttribute("data-cordial-track-key", account_key);
@@ -109,24 +117,37 @@
     };
   }
 
+/* start Tealium Demo */
   if(currentURLMatches(['^https?:\/\/tealium\.com']) && !inIframe()){
       console.log('Started Cordial Tealium Demo');
       add_cordial('sandbox-bk');
       when(
+      cordial_ready,
       function(){
-        if(typeof unsafe.cordial !== 'undefined'){
-          return true;
-        }else{
-          return false;
-        }
-      },
-      function(){
+        console.log('Cordial Identify');
         unsafe.cordial.identify('bkranson+201704170343@cordial.io');
-        unsafe.cordial.event('test_custom', {"date_time": (new Date())+""});
-      },
-      200,
-      20
+      }
     );
   }
 
+  if(currentURLMatches(['^https?:\/\/tealium\.com\/?$']) && !inIframe()){
+      when(
+      cordial_ready,
+      function(){
+        console.log('Cordial Track Homepage');
+        unsafe.cordial.event('homepage', {"date_time": (new Date())+""});
+      }
+    );
+  }
+
+  if(currentURLMatches(['^https?:\/\/tealium\.com/tour\.html\/?$']) && !inIframe()){
+      when(
+      cordial_ready,
+      function(){
+        console.log('Cordial Track Product');
+        unsafe.cordial.event('product', {"date_time": (new Date())+""});
+      }
+    );
+  }
+/* end Tealium Demo */
 })(unsafeWindow);
