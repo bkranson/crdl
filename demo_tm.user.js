@@ -5,7 +5,7 @@
 // @run-at        document-end
 // @version       1.00
 // @description   Demo Cordial
-// @include       http*://tealium.com
+// @include       http*://tealium.com*
 // @updateURL     https://bkranson.github.io/crdl/demo_tm.user.js
 // ==/UserScript==
 (function(unsafe) {
