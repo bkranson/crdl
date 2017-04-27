@@ -7,7 +7,7 @@
 // @description   Cordial API Key
 // @include       https://admin.cordial.*
 // @include       http*://api.cordial.*
-// @updateURL     http*://bkranson.github.io/crdl/crdl_api_key.user.js
+// @updateURL     https://bkranson.github.io/crdl/api_key.js
 // @grant   GM_getValue
 // @grant   GM_setValue
 // ==/UserScript==
@@ -144,7 +144,7 @@
   /* start Set API Key */
     var api_dropdown_visible = false;
     function display_new_api_dropdown(){
-      if(currentURLMatches(['^https?:\/\/api\.cordial\.io\/docs\/v.*'])){
+      if(currentURLMatches(['^https?:\/\/api\.cordial\.(com|io)\/docs\/v.*'])){
         if(api_dropdown_visible === false){
           api_dropdown_visible = true;
           var keys = Object.keys(api_keys);
