@@ -3,7 +3,7 @@
 // @namespace     crdl_api_key
 // @require       http://code.jquery.com/jquery-2.1.1.min.js
 // @run-at        document-end
-// @version       1.00
+// @version       1.01
 // @description   Cordial API Key
 // @include       https://admin.cordial.*
 // @include       http*://api.cordial.*
@@ -34,6 +34,7 @@
   var currentURL = unsafe.location.toString();
 
   var currentURLMatches = function currentURLMatches(listToMatch) {
+    currentURL = unsafe.location.toString();
     //console.log("Testing " + listToMatch);
     for (var i in listToMatch) {
       var pattern = listToMatch[i];
@@ -107,6 +108,7 @@
   if(typeof local === 'string' && local !== 'undefined' && local.length > 2){
     api_keys = JSON.parse(local);
   }
+  unsafe.api_keys = api_keys;
 
   /* start Get API Key */
     function get_new_api_key(){
@@ -189,9 +191,8 @@
   );
 
   function gmMain () {
-      console.log ('A new page has loaded.');
+      // console.log ('A new page has loaded.');
       get_new_api_key();
       display_new_api_dropdown();
-      // DO WHATEVER YOU WANT HERE.
   }
 })(unsafeWindow);
