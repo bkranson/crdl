@@ -3,7 +3,7 @@
 // @namespace     crdl_api_key
 // @require       http://code.jquery.com/jquery-2.1.1.min.js
 // @run-at        document-end
-// @version       1.01
+// @version       1.02
 // @description   Cordial API Key
 // @include       https://admin.cordial.*
 // @include       http*://api.cordial.*
@@ -105,6 +105,7 @@
 
   var api_keys = {};
   var local = GM_getValue('api_keys', '');
+  var get_api_key_running = false;
   if(typeof local === 'string' && local !== 'undefined' && local.length > 2){
     api_keys = JSON.parse(local);
   }
@@ -115,30 +116,34 @@
       if(currentURLMatches(['^https:\/\/admin\.cordial\.(com|io)\/\#account\/apikeys\/grid\/1'])){
         var account = '';
         var api_key = '';
-        when(
-          function(){
-            if($('.clipboard-input').is(':visible') === true){
-              return true;
-            }else{
-              return false;
-            }
-          },
-          function(){
-            try{
-              account = $('#head-nav span:contains("logged into")').text().split('logged into ')[1];
-            }catch(e){}
-            try{
-              api_key = $('.clipboard-input').val();
-            }catch(e){}
-            if(account !== '' && api_key !== ''){
-              api_keys[account] = api_key;
-              unsafe.api_keys = api_keys;
-              GM_setValue('api_keys', JSON.stringify(api_keys));
-            }
-          },
-          100,
-          1000
-        );
+        if(get_api_key_running === false){
+          when(
+            function(){
+              if($('.clipboard-input').is(':visible') === true){
+                  get_api_key_running = false;
+                  return true;
+              }else{
+                get_api_key_running = true;
+                return false;
+              }
+            },
+            function(){
+              try{
+                account = $('#head-nav span:contains("logged into")').text().split('logged into ')[1];
+              }catch(e){}
+              try{
+                api_key = $('.clipboard-input').val();
+              }catch(e){}
+              if(account !== '' && api_key !== ''){
+                api_keys[account] = api_key;
+                unsafe.api_keys = api_keys;
+                GM_setValue('api_keys', JSON.stringify(api_keys));
+              }
+            },
+            100,
+            1000
+          );
+        }
       }
     }
   /* end Get API Key */
