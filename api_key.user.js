@@ -3,7 +3,7 @@
 // @namespace     crdl_api_key
 // @require       http://code.jquery.com/jquery-2.1.1.min.js
 // @run-at        document-end
-// @version       1.02
+// @version       1.03
 // @description   Cordial API Key
 // @include       https://admin.cordial.*
 // @include       http*://api.cordial.*
@@ -155,6 +155,7 @@
         if(api_dropdown_visible === false){
           api_dropdown_visible = true;
           var keys = Object.keys(api_keys);
+          keys.sort();
           var select = '<select id="api_select">';
           select += '<option value="None">None</option>';
           for(var i=0; i<keys.length; i++){
