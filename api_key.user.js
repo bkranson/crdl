@@ -3,7 +3,7 @@
 // @namespace     crdl_api_key
 // @require       http://code.jquery.com/jquery-2.1.1.min.js
 // @run-at        document-end
-// @version       1.03
+// @version       1.04
 // @description   Cordial API Key
 // @include       https://admin.cordial.*
 // @include       http*://api.cordial.*
@@ -154,6 +154,9 @@
       if(currentURLMatches(['^https?:\/\/api\.cordial\.(com|io)\/docs\/v.*'])){
         if(api_dropdown_visible === false){
           api_dropdown_visible = true;
+          $('#input_user').prop('type', 'password').css('width', '500px');
+          var check_box = '<input id="show_key" type="checkbox">';
+          $(check_box).insertAfter('#auth_user');
           var keys = Object.keys(api_keys);
           keys.sort();
           var select = '<select id="api_select">';
@@ -164,6 +167,13 @@
           select += '</select>';
           $(select).insertAfter('#auth_user');
         }
+        $('#show_key').change(function(){
+          if($('#show_key').is(':checked')){
+            $('#input_user').prop('type', 'text').css('width', '500px');
+          }else{
+            $('#input_user').prop('type', 'password').css('width', '500px');
+          }
+        });
         $('#api_select').change(function(){
           if($('#api_select').val() !== 'None'){
             $('#input_user').val($('#api_select').val());
