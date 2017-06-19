@@ -17,7 +17,7 @@
     $('<input type="text" id="open_ticket" style="margin-top:5px;"></input>').insertAfter(jQuery('#tickets-settings').closest('li'));
     $('#open_ticket').live("keypress", function(e) {
       if (e.keyCode == 13) {
-        document.location = "https://app.assembla.com/spaces/cordial/tickets/realtime_cardwall?ticket=" + $('#open_ticket').val();
+        document.location = "https://app.assembla.com/spaces/cordial/tickets/realtime_cardwall?ticket=" + $('#open_ticket').val().trim();
         return false; // prevent the button click from happening
       }
     });
