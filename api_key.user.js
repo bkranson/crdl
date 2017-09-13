@@ -3,7 +3,7 @@
 // @namespace     crdl_api_key
 // @require       http://code.jquery.com/jquery-2.1.1.min.js
 // @run-at        document-end
-// @version       1.04
+// @version       1.05
 // @description   Cordial API Key
 // @include       https://admin.cordial.*
 // @include       http*://api.cordial.*
@@ -84,6 +84,14 @@
           return true;
       }
   };
+
+  var change_favicon = function(url) {
+    var link = document.querySelector("link[rel*='icon']") || document.createElement('link');
+    link.type = 'image/x-icon';
+    link.rel = 'shortcut icon';
+    link.href = url;
+    document.getElementsByTagName('head')[0].appendChild(link);
+};
 
   if($ && $.fn){
     $.fn.bindFirst = function(name, fn) {
@@ -210,5 +218,14 @@
       // console.log ('A new page has loaded.');
       get_new_api_key();
       display_new_api_dropdown();
+      if(currentURLMatches(['^https?:\/\/api\.cordial\.(com|io)\/docs\/v.*'])){
+        //setTimeout(function(){change_favicon('https://cordialdev-solutions.s3.amazonaws.com/favicon/white_pinkCloud.jpg');}, 500);
+        //setTimeout(function(){change_favicon('https://cordialdev-solutions.s3.amazonaws.com/favicon/white_pinkCloud.jpg');}, 750);
+        setTimeout(function(){change_favicon('https://cordialdev-solutions.s3.amazonaws.com/favicon/white_circle_teal_cloud.png');}, 500);
+        setTimeout(function(){change_favicon('https://cordialdev-solutions.s3.amazonaws.com/favicon/white_circle_teal_cloud.png');}, 750);
+      }else if(currentURLMatches(['^https:\/\/admin\.cordial\.(com|io).*'])){
+        //change_favicon('https://cordialdev-solutions.s3.amazonaws.com/favicon/pink_whiteCloud.jpg');
+        change_favicon('https://cordialdev-solutions.s3.amazonaws.com/favicon/teal_circle_white_cloud.png');
+      }
   }
 })(unsafeWindow);
