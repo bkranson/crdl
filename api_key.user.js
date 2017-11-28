@@ -3,7 +3,7 @@
 // @namespace     crdl_api_key
 // @require       http://code.jquery.com/jquery-2.1.1.min.js
 // @run-at        document-end
-// @version       1.05
+// @version       1.06
 // @description   Cordial API Key
 // @include       https://admin.cordial.*
 // @include       http*://api.cordial.*
@@ -114,6 +114,7 @@
   var api_keys = {};
   var local = GM_getValue('api_keys', '');
   var get_api_key_running = false;
+  var ran_set_interval = false;
   if(typeof local === 'string' && local !== 'undefined' && local.length > 2){
     api_keys = JSON.parse(local);
   }
@@ -191,6 +192,7 @@
       }
     }
   /* end Set API Key */
+
   /*--- Note, gmMain () will fire under all these conditions:
       http://stackoverflow.com/questions/18989345/how-do-i-reload-a-greasemonkey-script-when-ajax-changes-the-url-without-reloadin
       1) The page initially loads or does an HTML reload (F5, etc.).
@@ -213,6 +215,65 @@
       }
       , 111
   );
+  function is_super_admin(){
+    return ($('li.profile_menu span:contains("Super Admin Panel")').length == 1);
+  }
+    function super_admin(){
+        $('<li class="button dropdown" data-class="jobs-notification"><a id="download_csv" href="#" ><i class="fa fa-arrow-down"></i></a></li>').insertBefore($($('li[data-class=jobs-notification]')[0]));
+        $('#download_csv').click(function(){
+            $.getJSON('https://admin.cordial.io/api/accountusers?sort_by=lastLogin&sort_dir=DESC&per_page=10000&page=1', function(data){
+                var exportToCsv = function (filename, rows) {
+                    var processRow = function (row) {
+                        var finalVal = '';
+                        for (var j = 0; j < row.length; j++) {
+                            var innerValue = row[j] === null ? '' : row[j].toString();
+                            if (row[j] instanceof Date) {
+                                innerValue = row[j].toLocaleString();
+                            };
+                            var result = innerValue.replace(/"/g, '""');
+                            if (result.search(/("|,|\n)/g) >= 0)
+                                result = '"' + result + '"';
+                            if (j > 0)
+                                finalVal += ',';
+                            finalVal += result;
+                        }
+                        return finalVal + '\n';
+                    };
+
+                    var csvFile = '';
+                    for (var i = 0; i < rows.length; i++) {
+                        csvFile += processRow(rows[i]);
+                    }
+
+                    var blob = new Blob([csvFile], { type: 'text/csv;charset=utf-8;' });
+                    if (navigator.msSaveBlob) { // IE 10+
+                        navigator.msSaveBlob(blob, filename);
+                    } else {
+                        var link = document.createElement("a");
+                        if (link.download !== undefined) { // feature detection
+                            // Browsers that support HTML5 download attribute
+                            var url = URL.createObjectURL(blob);
+                            link.setAttribute("href", url);
+                            link.setAttribute("download", filename);
+                            link.style.visibility = 'hidden';
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+                        }
+                    }
+                };
+                var csv = [];
+                csv.push(['lastLogin','email','userName']);
+                for(var i=0, l=data.records.length; i<l; i++){
+                    var row = data.records[i];
+                    csv.push([row.lastLogin, row.email, row.userName]);
+                }
+                var now = new Date();
+                var now_str = now.toISOString().replace('.', '_').replace(':', '_').replace('-', '_');
+                exportToCsv('contacts'+now_str+'.csv', csv);
+            });
+        });
+    };
 
   function gmMain () {
       // console.log ('A new page has loaded.');
@@ -226,6 +287,19 @@
       }else if(currentURLMatches(['^https:\/\/admin\.cordial\.(com|io).*'])){
         //change_favicon('https://cordialdev-solutions.s3.amazonaws.com/favicon/pink_whiteCloud.jpg');
         change_favicon('https://cordialdev-solutions.s3.amazonaws.com/favicon/teal_circle_white_cloud.png');
+        if(ran_set_interval == false){
+          if(is_super_admin){
+            super_admin();
+          }
+          ran_set_interval = true;
+          setInterval(function(){
+            if(jQuery('button:contains("Continue working")').length > 0){
+                console.info("click continue working at: " + (new Date()).toISOString());
+                jQuery('button:contains("Continue working")').click();
+            }
+          }, 240000);
+        }
       }
   }
+
 })(unsafeWindow);
