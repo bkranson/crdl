@@ -3,7 +3,7 @@
 // @namespace     crdl_api_key
 // @require       http://code.jquery.com/jquery-2.1.1.min.js
 // @run-at        document-end
-// @version       1.06
+// @version       1.07
 // @description   Cordial API Key
 // @include       https://admin.cordial.*
 // @include       http*://api.cordial.*
@@ -244,7 +244,11 @@
                     for (var i = 0; i < rows.length; i++) {
                         csvFile += processRow(rows[i]);
                     }
-
+                    var csv_temp_array = csvFile.split('\n');
+                    csvFile = csv_temp_array.shift() + '\n';
+                    csv_temp_array.reverse();
+                    var trash_blank_row = csv_temp_array.shift();
+                    csvFile = csvFile + csv_temp_array.join('\n');
                     var blob = new Blob([csvFile], { type: 'text/csv;charset=utf-8;' });
                     if (navigator.msSaveBlob) { // IE 10+
                         navigator.msSaveBlob(blob, filename);
@@ -262,15 +266,41 @@
                         }
                     }
                 };
-                var csv = [];
-                csv.push(['lastLogin','email','userName']);
+                unsafe.csv = [];
+                unsafe.csv.push(['lastLogin','email','userName','domain','accountNamess','accountNumbers','userID','userAccountsID']);
+                unsafe.row_counter = 0;
                 for(var i=0, l=data.records.length; i<l; i++){
-                    var row = data.records[i];
-                    csv.push([row.lastLogin, row.email, row.userName]);
+                  var row = data.records[i];
+                  row.domain = (row.email.split('@')[1] || '');
+                  var account_names_str = '';
+                  var account_numbers_str = '';
+                  if( row.lastLogin != null && (row.lastLogin || '').indexOf('20' > -1) && (row.domain || '').indexOf('cordial') == -1){ /* year is 20xx and domain does not include cordial */
+                    (function(row, i, l, unsafe){
+                      jQuery.getJSON('https://admin.cordial.io/api/users/'+row.userID+'/accounts?page=1&sort_by=accountName&sort_dir=ASC', function(data){
+                        unsafe.row_counter++;
+                        var accountNames = [];
+                        var accountNumbers = [];
+                        for(var j=0,l_j=data.records.length; j<l_j; j++){
+                          var account_row = data.records[j];
+                          accountNames.push(account_row.accountName);
+                          account_names_str = accountNames.join('|');
+                          accountNumbers.push(account_row.accountID);
+                          account_numbers_str = accountNumbers.join('|');
+                        }
+                        csv.push([row.lastLogin, row.email, row.userName, row.domain, account_names_str, account_numbers_str, row.userID, row.userAccountsID]);
+                        if(unsafe.row_counter == l){
+                          setTimeout(function(){
+                            var now = new Date();
+                            var now_str = now.toISOString().replace('.', '_').replace(':', '_').replace('-', '_');
+                            exportToCsv('contacts'+now_str+'.csv', unsafe.csv);
+                          }, 750);
+                        }
+                      });
+                    }(row, i, l, unsafe));
+                  }else{
+                    unsafe.row_counter++;
+                  }
                 }
-                var now = new Date();
-                var now_str = now.toISOString().replace('.', '_').replace(':', '_').replace('-', '_');
-                exportToCsv('contacts'+now_str+'.csv', csv);
             });
         });
     };
