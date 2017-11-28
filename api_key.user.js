@@ -269,6 +269,7 @@
                 unsafe.csv = [];
                 unsafe.csv.push(['lastLogin','email','userName','domain','accountNamess','accountNumbers','userID','userAccountsID']);
                 unsafe.row_counter = 0;
+                alert('wait about 20 seconds');
                 for(var i=0, l=data.records.length; i<l; i++){
                   var row = data.records[i];
                   row.domain = (row.email.split('@')[1] || '');
