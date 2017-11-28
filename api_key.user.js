@@ -288,7 +288,7 @@
         //change_favicon('https://cordialdev-solutions.s3.amazonaws.com/favicon/pink_whiteCloud.jpg');
         change_favicon('https://cordialdev-solutions.s3.amazonaws.com/favicon/teal_circle_white_cloud.png');
         if(ran_set_interval == false){
-          if(is_super_admin){
+          if(is_super_admin() == true){
             super_admin();
           }
           ran_set_interval = true;
