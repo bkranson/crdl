@@ -3,7 +3,7 @@
 // @namespace     crdl_api_key
 // @require       http://code.jquery.com/jquery-2.1.1.min.js
 // @run-at        document-end
-// @version       1.07
+// @version       1.08
 // @description   Cordial API Key
 // @include       https://admin.cordial.*
 // @include       http*://api.cordial.*
@@ -179,8 +179,15 @@
         $('#show_key').change(function(){
           if($('#show_key').is(':checked')){
             $('#input_user').prop('type', 'text').css('width', '500px');
+              jQuery('pre').filter(function () {
+                  return /^http/.test($(this).text());
+              }).each(function(){$(this).text($(this).text().replace(/^https:\/\/.*api\./, 'https://'+$('#input_user').val()+':@api.'));});
+
           }else{
             $('#input_user').prop('type', 'password').css('width', '500px');
+              jQuery('pre').filter(function () {
+                  return /^http/.test($(this).text());
+              }).each(function(){$(this).text($(this).text().replace(/^https:\/\/.*api\./, 'https://api.'));});
           }
         });
         $('#api_select').change(function(){
