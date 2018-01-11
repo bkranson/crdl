@@ -3,9 +3,10 @@
 // @namespace     crdl_zendesk
 // @require       http://code.jquery.com/jquery-2.1.1.min.js
 // @run-at        document-end
-// @version       1.01
+// @version       1.02
 // @description   Cordial Zendesk
 // @include       http*://cordial.zendesk.com/*
+// @include       http*://support.cordial.com*
 // @updateURL     https://bkranson.github.io/crdl/zendesk.user.js
 // @grant   GM_getValue
 // @grant   GM_setValue
@@ -143,7 +144,7 @@
         //setTimeout(function(){change_favicon('https://cordialdev-solutions.s3.amazonaws.com/favicon/teal_whiteCloud.jpg');}, 500);
         change_favicon('https://cordialdev-solutions.s3.amazonaws.com/favicon/pink_circle_white_cloud.png');
         setTimeout(function(){change_favicon('https://cordialdev-solutions.s3.amazonaws.com/favicon/pink_circle_white_cloud.png');}, 500);
-      }else if(currentURLMatches(['^https?:\/\/cordial\.zendesk\.com\/hc\/en.us.*'])){
+      }else if(currentURLMatches(['^https?:\/\/support\.cordial\.com\/hc\/en.us.*'])){
         //change_favicon('https://cordialdev-solutions.s3.amazonaws.com/favicon/white_tealCloud.jpg');
         change_favicon('https://cordialdev-solutions.s3.amazonaws.com/favicon/white_circle_pink_cloud.png');
       }
