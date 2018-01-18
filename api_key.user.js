@@ -3,7 +3,7 @@
 // @namespace     crdl_api_key
 // @require       http://code.jquery.com/jquery-2.1.1.min.js
 // @run-at        document-end
-// @version       1.08
+// @version       1.09
 // @description   Cordial API Key
 // @include       https://admin.cordial.*
 // @include       http*://api.cordial.*
@@ -318,12 +318,9 @@
       get_new_api_key();
       display_new_api_dropdown();
       if(currentURLMatches(['^https?:\/\/api\.cordial\.(com|io)\/docs\/v.*'])){
-        //setTimeout(function(){change_favicon('https://cordialdev-solutions.s3.amazonaws.com/favicon/white_pinkCloud.jpg');}, 500);
-        //setTimeout(function(){change_favicon('https://cordialdev-solutions.s3.amazonaws.com/favicon/white_pinkCloud.jpg');}, 750);
-        setTimeout(function(){change_favicon('https://cordialdev-solutions.s3.amazonaws.com/favicon/white_circle_teal_cloud.png');}, 500);
-        setTimeout(function(){change_favicon('https://cordialdev-solutions.s3.amazonaws.com/favicon/white_circle_teal_cloud.png');}, 750);
+        setTimeout(function(){change_favicon('https://cordialdev-solutions.s3.amazonaws.com/favicon/white_circle_pink_cloud.png');}, 500);
+        setTimeout(function(){change_favicon('https://cordialdev-solutions.s3.amazonaws.com/favicon/white_circle_pink_cloud.png');}, 750);
       }else if(currentURLMatches(['^https:\/\/admin\.cordial\.(com|io).*'])){
-        //change_favicon('https://cordialdev-solutions.s3.amazonaws.com/favicon/pink_whiteCloud.jpg');
         change_favicon('https://cordialdev-solutions.s3.amazonaws.com/favicon/teal_circle_white_cloud.png');
         if(ran_set_interval == false){
           if(is_super_admin() == true){
