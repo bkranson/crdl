@@ -3,7 +3,7 @@
 // @namespace     crdl_api_key
 // @require       http://code.jquery.com/jquery-2.1.1.min.js
 // @run-at        document-end
-// @version       1.10
+// @version       1.11
 // @description   Cordial API Key
 // @include       https://admin.cordial.*
 // @include       http*://api.cordial.*
@@ -277,31 +277,29 @@
      *
      /**************************************/
 
-    //GM_deleteValue('accounts');
+    // GM_setValue('accounts', '');
 
     var maxHours = 8;
-    var accountData = [];
+    var accountData = new Array();
     var get_api_key_running = false;
     var ran_set_interval = false;
     var accounts = loadAccountData();
 
-    if(typeof accounts === 'string' && accounts !== 'undefined' && accounts.length > 2)
+    if(typeof accounts === 'string' && accounts !== 'undefined')
     {
         accountData = JSON.parse(accounts);
 
         $.each(accountData, function(key, account) {
+            console.info('account: ' + account.name);
             if(accountInactive(account))
             {
                 // Remove inactive account from local storage
-                console.info('Removing inactive account [' + account.name + ']!');
                 deleteAccountData(account.name);
+                // Update local storage
+                saveAccountData();
             }
         });
-
-        // Update local storage
-        saveAccountData();
     }
-
 
     /*
       Grandfather old local storage value
@@ -318,19 +316,20 @@
                "date_lastused": new Date().toISOString()});
         });
 
-        // -- UNCOMMENT WHEN READY --
-        // GM_deleteValue('api_keys');
+        GM_deleteValue('api_keys');
     }
 
     unsafe.accountData = accountData;
+
+
 
     /**
         Check last date api key was used is greater than 2 days.
     **/
     function accountInactive(account)
     {
-        var date1 = new Date(account.date_created);
-        var date2 = new Date(account.date_lastused);
+        var date1 = new Date(account.date_lastused);
+        var date2 = new Date();
         var diff = (date2.getTime()-date1.getTime())/3600000 | 0;
         return diff > maxHours;
     }
@@ -357,6 +356,7 @@
     */
     function addAccountData(accountName, apiKey)
     {
+        console.info('Adding account data for account: ' + accountName);
         accountData.push({
             "key": apiKey,
             "name": accountName,
@@ -372,6 +372,8 @@
     {
         $.each(accountData, function(id, account) {
             if(account.name == accountName) {
+                console.info('Updating account data for ' + accountName);
+                console.info(account);
                 accountData[id].date_lastused = new Date().toISOString();
                 accountData[id].key = apiKey;
             }
@@ -385,6 +387,7 @@
         $.each(accountData, function(id, account) {
             if(account.name == accountName) {
                 console.info('Deleting data for account: ' + accountName);
+                console.info(account);
                 delete accountData[id];
             }
         });
@@ -406,7 +409,8 @@
 
     function loadAccountData()
     {
-        return GM_getValue('accounts', '');
+        var result = GM_getValue('accounts', '');
+        return result;
     }
 
     function accountExists(accountName)
@@ -427,7 +431,9 @@
     {
         var list = [];
         $.each(accountData, function(key, account) {
-            list.push({'name': account.name, 'key': account.key});
+            if(!accountInactive(account)) {
+                list.push({'name': account.name, 'key': account.key});
+            }
         });
 
         return list.sort(function(a, b){
@@ -435,7 +441,9 @@
         });
     }
 
-    /* Get the selected API Key from the Cordial Admin Site: API Keys Page */
+    /*
+      Get the selected API Key Cordial Admin Site - API Keys Page
+    */
     function get_new_api_key()
     {
       if(currentURLMatches(['^https:\/\/admin\.cordial\.(com|io)\/\#account\/apikeys\/grid\/1']))
@@ -470,8 +478,6 @@
                   {
                       if(accountExists(accountName)) {
                           updateAccountData(accountName, apiKey);
-                          console.info('UPDATE ACCOUNT DATA');
-                          console.info(accountData);
                       } else {
                           addAccountData(accountName, apiKey);
                       }
@@ -485,22 +491,22 @@
       }
     }
 
-    /* Get the API Key from the API Key list */
+    /*
+      Begin set api key
+    */
     var api_dropdown_visible = false;
 
     function display_new_api_dropdown()
     {
         if(currentURLMatches(['^https?:\/\/api\.cordial\.(com|io)\/docs\/v.*']))
         {
-            $('#auth_user').hide();
-
             if(api_dropdown_visible === false)
             {
                 api_dropdown_visible = true;
                 $('#input_user').prop('type', 'password').css('width', '500px');
 
                 var check_box = '<input id="show_key" type="checkbox">';
-                $(check_box).insertAfter('#input_user');
+                $(check_box).insertAfter('#auth_user');
 
                 var select = '<select id="api_select">';
                 select += '<option value="None">None</option>';
@@ -510,7 +516,7 @@
                 });
 
                 select += '</select>';
-                $(select).insertAfter('#input_user');
+                $(select).insertAfter('#auth_user');
             }
 
 
@@ -547,8 +553,11 @@
                     updateAccountData(accountName, apiKey);
                     $("#api_select option:selected").text(accountName + ' - Expires: @ ' + getExpirationDate(accountName))
 
+
                     $('#input_user').val($('#api_select').val());
                     $('#auth_user').click();
+
+                    // alert('You have successfully been authorized!');
                 }
             });
         }
