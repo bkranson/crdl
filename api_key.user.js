@@ -3,7 +3,7 @@
 // @namespace     crdl_api_key
 // @require       http://code.jquery.com/jquery-2.1.1.min.js
 // @run-at        document-end
-// @version       1.11
+// @version       1.12
 // @description   Cordial API Key
 // @include       https://admin.cordial.*
 // @include       http*://api.cordial.*
@@ -517,6 +517,7 @@
 
                 select += '</select>';
                 $(select).insertAfter('#auth_user');
+                $('#auth_user').css('display','none');
             }
 
 
@@ -553,11 +554,8 @@
                     updateAccountData(accountName, apiKey);
                     $("#api_select option:selected").text(accountName + ' - Expires: @ ' + getExpirationDate(accountName))
 
-
                     $('#input_user').val($('#api_select').val());
                     $('#auth_user').click();
-
-                    // alert('You have successfully been authorized!');
                 }
             });
         }
