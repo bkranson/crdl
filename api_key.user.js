@@ -3,7 +3,7 @@
 // @namespace     crdl_api_key
 // @require       http://code.jquery.com/jquery-2.1.1.min.js
 // @run-at        document-end
-// @version       1.12
+// @version       1.14
 // @description   Cordial API Key
 // @include       https://admin.cordial.*
 // @include       http*://api.cordial.*
@@ -518,6 +518,14 @@
                 select += '</select>';
                 $(select).insertAfter('#auth_user');
                 $('#auth_user').css('display','none');
+                /*
+                  Add code for the deliv team.
+                */
+                var deliv_json = {"channels": {"email": {"invalid": false}}};
+                var deliv_elem = jQuery('#contacts_updateContacts_content textarea');
+                if(deliv_elem.val() == ''){
+                  deliv_elem.val(JSON.stringify(deliv_json,null,2));
+                }
             }
 
 
